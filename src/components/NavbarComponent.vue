@@ -33,6 +33,7 @@
         stroke-width="1.5"
         stroke="currentColor"
         class="size-6 cursor-pointer"
+        @click="handleSearchClick"
       >
         <path
           stroke-linecap="round"
@@ -174,6 +175,13 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import { ref } from 'vue'
+import { useMainStore } from '../stores/mainStore'
 
+const mainStore = useMainStore()
 const menuOpen = ref(false)
+
+const handleSearchClick = () => {
+  mainStore.showSearch = !mainStore.showSearch
+  mainStore.search = ''
+}
 </script>

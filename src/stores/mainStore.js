@@ -6,6 +6,8 @@ export const useMainStore = defineStore('mainStore', () => {
   const products = ref(allProducts)
   const currency = 'Rp'
   const deliveryFee = 10000
+  const search = ref('')
+  const showSearch = ref(false)
 
-  return { products, currency, deliveryFee }
+  return { products, currency, deliveryFee, search, showSearch }
 })
