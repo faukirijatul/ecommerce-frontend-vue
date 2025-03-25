@@ -21,9 +21,7 @@
       <!-- product details -->
       <div class="w-full sm:w-1/2">
         <h1 class="text-2xl font-meduim">{{ product.name }}</h1>
-        <p class="text-2xl mt-2">
-          {{ currency }} {{ product.price.toLocaleString('id-ID') }}
-        </p>
+        <p class="text-2xl mt-2">{{ currency }} {{ product.price.toLocaleString('id-ID') }}</p>
         <div class="flex flex-col gap-2 my-8">
           <p>Select Size:</p>
           <div class="flex flex-wrap gap-2">
@@ -84,63 +82,105 @@
       <h2 class="text-2xl font-medium">Description</h2>
       <p class="mt-3 whitespace-pre-wrap">{{ product.description }}</p>
     </div>
+
+    <!-- related products -->
+    <RelatedProducts :category="product.category" :subCategory="product.subCategory" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { useMainStore } from '../stores/mainStore';
-import { storeToRefs } from 'pinia';
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { useMainStore } from '../stores/mainStore'
+import { storeToRefs } from 'pinia'
+import RelatedProducts from '../components/RelatedProducts.vue'
+import { useToast } from "vue-toastification";
 
-const route = useRoute();
-const store = useMainStore();
-const { products, currency } = storeToRefs(store);
+const toast = useToast();
+const route = useRoute()
+const store = useMainStore()
+const { products, currency, cartData } = storeToRefs(store)
 
-const productId = computed(() => route.params.productId);
-const product = ref(null);
-const image = ref('');
-const size = ref(null);
-const quantity = ref(1);
+const productId = computed(() => route.params.productId)
+const product = ref(null)
+const image = ref('')
+const size = ref(null)
+const quantity = ref(1)
 
 // Function to find and set the product
 const findProduct = () => {
-  const foundProduct = products.value.find((p) => p._id === productId.value);
+  const foundProduct = products.value.find((p) => p._id === productId.value)
   if (foundProduct) {
-    product.value = foundProduct;
-    image.value = foundProduct.image[0];
+    product.value = foundProduct
+    image.value = foundProduct.image[0]
   }
-};
+}
 
 // Watch for changes in productId or products array
-watch([productId, products], () => {
-  findProduct();
-}, { immediate: true });
+watch(
+  [productId, products],
+  () => {
+    findProduct()
+  },
+  { immediate: true },
+)
 
 // Increment quantity
 const incrementQuantity = () => {
-  quantity.value = Number(quantity.value) + 1;
-};
+  quantity.value = Number(quantity.value) + 1
+}
 
 // Decrement quantity
 const decrementQuantity = () => {
   if (quantity.value > 1) {
-    quantity.value = Number(quantity.value) - 1;
+    quantity.value = Number(quantity.value) - 1
   }
-};
+}
+
+onMounted(() => {
+  cartData.value = JSON.parse(localStorage.getItem('cartItems')) || []
+})
+
+watch(
+  cartData,
+  (newCartData) => {
+    localStorage.setItem('cartItems', JSON.stringify(newCartData))
+  },
+  { deep: true },
+)
 
 // Add to cart function
 const handleAddToCart = () => {
+  if (!size.value) {
+    alert('Silakan pilih ukuran terlebih dahulu!')
+    return
+  }
+
   const orderItem = {
     ...product.value,
     size: size.value,
-    quantity: quantity.value,
-  };
+    quantity: Number(quantity.value),
+  }
 
-  const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-  cartItems.push(orderItem);
-  localStorage.setItem('cartItems', JSON.stringify(cartItems));
-};
+  let updatedCartItems
+
+  if (cartData.value.some((item) => item._id === orderItem._id && item.size === orderItem.size)) {
+    updatedCartItems = cartData.value.map((item) => {
+      if (item._id === orderItem._id && item.size === orderItem.size) {
+        return { ...item, quantity: item.quantity + orderItem.quantity }
+      }
+      return item
+    })
+  } else {
+    updatedCartItems = [...cartData.value, orderItem]
+  }
+
+  localStorage.setItem('cartItems', JSON.stringify(updatedCartItems))
+
+  cartData.value = [...updatedCartItems]
+
+  toast.success("Cart updated!")
+}
 </script>
 
 <style scoped>

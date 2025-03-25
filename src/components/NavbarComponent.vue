@@ -93,7 +93,7 @@
         <span
           class="absolute leading-4 bottom-[-5px] right-[-5px] text-[8px] bg-black text-white text-center aspect-square w-4 rounded-full"
         >
-          1
+          {{ cartCount || 0 }}
         </span>
       </RouterLink>
 
@@ -174,14 +174,20 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useMainStore } from '../stores/mainStore'
+import { storeToRefs } from 'pinia'
 
-const mainStore = useMainStore()
+const store = useMainStore()
+const { cartData } = storeToRefs(store)
 const menuOpen = ref(false)
 
+const cartCount = computed(() => {
+  return cartData.value?.map((item) => item.quantity).reduce((acc, curr) => acc + curr, 0)
+})
+
 const handleSearchClick = () => {
-  mainStore.showSearch = !mainStore.showSearch
-  mainStore.search = ''
-}
+  store.showSearch = !store.showSearch
+  store.search = ''
+};
 </script>
