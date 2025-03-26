@@ -1,10 +1,7 @@
 <template>
   <div class="border-t pt-14">
     <div class="text-2xl mb-3">
-      <h2 class="text-center">
-        <span>YOUR</span>
-        <span class="ml-2">CART</span>
-      </h2>
+      <TitleComponent text1="YOUR" text2="CART" />
     </div>
 
     <div>
@@ -74,49 +71,29 @@
     </div>
 
     <div class="flex justify-end my-20">
-      <div class="w-full sm:w-[450px]">
-        <div class="bg-slate-50 p-4 rounded-lg space-y-3">
-          <div class="flex justify-between">
-            <span>Subtotal</span>
-            <span>{{ mainStore.currency }} {{ mainStore.cartTotal?.toLocaleString('id-ID') }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span>Delivery Fee</span>
-            <span
-              >{{ mainStore.currency }} {{ mainStore.deliveryFee?.toLocaleString('id-ID') }}</span
-            >
-          </div>
-          <div class="flex justify-between font-bold">
-            <span>Total</span>
-            <span
-              >{{ mainStore.currency }}
-              {{ (mainStore.cartTotal + mainStore.deliveryFee)?.toLocaleString('id-ID') }}</span
-            >
-          </div>
-        </div>
+        <div class="w-full sm:w-[450px]">
+          <CartTotal />
 
-        <div class="mt-10 flex justify-end">
-          <button class="bg-gray-700 active:bg-gray-900 text-white py-2 px-4">Checkout</button>
+          <div class="mt-10 flex justify-end">
+            <button
+              :class="`bg-gray-700 active:bg-gray-900 text-white py-2 px-4`"
+              @click="router.push('/place-order')"
+            >
+              Checkout
+            </button>
+          </div>
         </div>
       </div>
-    </div>
   </div>
 </template>
 
 <script setup>
 import { useMainStore } from '@/stores/mainStore'
+import TitleComponent from '@/components/TitleComponent.vue';
+import CartTotal from '@/components/CartTotal.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const mainStore = useMainStore()
 </script>
-
-<style scoped>
-.no-spinner::-webkit-inner-spin-button,
-.no-spinner::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.no-spinner {
-  -moz-appearance: textfield;
-}
-</style>

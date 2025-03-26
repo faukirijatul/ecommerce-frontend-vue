@@ -41,6 +41,15 @@ export const useMainStore = defineStore('mainStore', () => {
     return cartData.value.reduce((total, product) => total + product.price * product.quantity, 0)
   })
 
+  const getAmount = () => {
+    let amount = 0;
+    cartData.value.forEach((product) => {
+      let totalPerItem = product.price * product.quantity;
+      amount = amount + totalPerItem;
+    });
+    return amount;
+  };
+
   return {
     products,
     currency,
@@ -52,5 +61,6 @@ export const useMainStore = defineStore('mainStore', () => {
     decreaseQuantity,
     removeFromCart,
     cartTotal,
+    getAmount
   }
 })

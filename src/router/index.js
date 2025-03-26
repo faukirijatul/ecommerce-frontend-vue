@@ -4,6 +4,7 @@ import CollectionView from '@/views/CollectionView.vue'
 import ContactView from '@/views/ContactView.vue'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
+import RegisterView from '@/views/RegisterView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import OrdersView from '@/views/OrdersView.vue'
 import PlaceOrderView from '@/views/PlaceOrderView.vue'
@@ -47,6 +48,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: RegisterView,
     },
     {
       path: '/place-order',

@@ -3,7 +3,7 @@
     <div class="flex gap-5 md:gap-12 flex-col sm:flex-row">
       <!-- product images -->
       <div class="w-full sm:w-1/2">
-        <img :src="image" alt="product" class="w-full object-cover" />
+        <img :src="image" :alt="product.name" class="w-full object-cover" />
         <div class="grid grid-cols-5 gap-1 mt-5 w-full">
           <img
             v-for="img in product.image"
